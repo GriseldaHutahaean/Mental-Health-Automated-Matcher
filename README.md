@@ -87,11 +87,6 @@ java -cp bin driver.Main
 - `findAlternativeSlots()`: Mencari alternatif dari konselor lain
 - `parseSlots()`: Parse input jam dari format pilihan (1-9) menjadi waktu (08:00, 09:00, dst)
 
-## Komentar & Dokumentasi
-Semua file kode dilengkapi komentar dalam Bahasa Indonesia untuk memudahkan pembelajaran OOP dan struktur sistem.
-
----
 **Dikembangkan untuk pembelajaran OOP dan Sistem Informasi Kesehatan Mental Kampus**
-=======
->>>>>>> 62ac65f6f1898a6c27feade7b32c891bed8b526a
+
 "# Mental-Health-Automated-Matcher" 
