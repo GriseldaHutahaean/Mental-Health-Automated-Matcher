@@ -1,4 +1,3 @@
-<<<<<<< HEAD
 # Mental Health Automated Matcher
 
 Proyek Java yang mengotomatisasi pencocokan jadwal konseling antara mahasiswa dan konselor dengan sistem alternatif yang cerdas.
