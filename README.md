@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # Mental Health Automated Matcher
 
 Proyek Java yang mengotomatisasi pencocokan jadwal konseling antara mahasiswa dan konselor dengan sistem alternatif yang cerdas.
@@ -92,4 +93,6 @@ Semua file kode dilengkapi komentar dalam Bahasa Indonesia untuk memudahkan pemb
 
 ---
 **Dikembangkan untuk pembelajaran OOP dan Sistem Informasi Kesehatan Mental Kampus**
+=======
+>>>>>>> 62ac65f6f1898a6c27feade7b32c891bed8b526a
 "# Mental-Health-Automated-Matcher" 
