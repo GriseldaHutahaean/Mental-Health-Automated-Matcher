@@ -121,7 +121,7 @@ public class Main {
                 requestDay = validDay;
                 break; // keluar kalau valid
             } else {
-                System.out.println("❌ Hari tidak valid, silakan coba lagi.");
+                System.out.println("Hari tidak valid, silakan coba lagi.");
             }
         }
 
@@ -132,11 +132,11 @@ public class Main {
         if (appointment != null) {
             System.out.println("\n" + appointment);
         } else {
-            System.out.println("\n❌ Tidak ada slot yang cocok dengan preferensi Anda pada hari " + student.getRequestDay() + ".");
+            System.out.println("\nTidak ada slot yang cocok dengan preferensi Anda pada hari " + student.getRequestDay() + ".");
             
             // Tampilkan jadwal lengkap konselor di hari yang sama
-            System.out.println("\n=== 📅 Jadwal Konselor pada " + student.getRequestDay() + " ===");
-            displayCounselorSchedulesOnDay(counselors, student, student.getRequestDay());
+            System.out.println("\n=== Jadwal Konselor pada " + student.getRequestDay() + " ===");
+            List<Appointment> allAvailableSlots = displayCounselorSchedulesOnDayWithOptions(counselors, student, student.getRequestDay());
             
             System.out.println("\n" + "=".repeat(50));
             
@@ -144,54 +144,58 @@ public class Main {
             List<Appointment> alternatives = findAlternativeSlots(student, counselors, selectedCounselor);
             
             if (!alternatives.isEmpty()) {
-                // Separate same-day and other-day alternatives
+                // Hanya ambil alternatif di hari yang sama
                 List<Appointment> sameDayAlts = new ArrayList<>();
-                List<Appointment> otherDayAlts = new ArrayList<>();
                 
                 for (Appointment alt : alternatives) {
                     if (alt.getDay().equals(student.getRequestDay())) {
                         sameDayAlts.add(alt);
-                    } else {
-                        otherDayAlts.add(alt);
                     }
                 }
                 
-                // Show same-day alternatives first
+                //menampilkan alternatif di hari yg sama
                 if (!sameDayAlts.isEmpty()) {
-                    System.out.println("\n=== 💡 Alternatif Jadwal Hari " + student.getRequestDay() + " ===");
+                    System.out.println("\n=== Alternatif Jadwal Hari " + student.getRequestDay() + " (Tidak Ada Konflik) ===");
                     for (int i = 0; i < sameDayAlts.size(); i++) {
                         Appointment alt = sameDayAlts.get(i);
                         System.out.println((i + 1) + ". " + alt.getCounselor().getFullName());
-                        System.out.println("   └─ Jam: " + alt.getSlotTime() + " | Hari: " + alt.getDay());
+                        System.out.println("   Jam: " + alt.getSlotTime() + " | Hari: " + alt.getDay());
                     }
-                }
-                
-                // Show other-day alternatives if any
-                if (!otherDayAlts.isEmpty()) {
-                    System.out.println("\n=== Alternatif Jadwal Hari Lain ===");
-                    int startIdx = sameDayAlts.size();
-                    for (int i = 0; i < otherDayAlts.size(); i++) {
-                        Appointment alt = otherDayAlts.get(i);
-                        System.out.println((startIdx + i + 1) + ". " + alt.getCounselor().getFullName());
-                        System.out.println("   └─ Jam: " + alt.getSlotTime() + " | Hari: " + alt.getDay());
+                    
+                    System.out.print("\nPilih alternatif (1-" + sameDayAlts.size() + "), atau 0 untuk tidak: ");
+                    try {
+                        int altChoice = Integer.parseInt(scanner.nextLine().trim());
+                        if (altChoice > 0 && altChoice <= sameDayAlts.size()) {
+                            Appointment selectedAlt = sameDayAlts.get(altChoice - 1);
+                            System.out.println("\nJadwal Anda telah dikonfirmasi:\n");
+                            System.out.println(selectedAlt);
+                        } else if (altChoice != 0) {
+                            System.out.println("Input tidak valid.");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Input tidak valid.");
                     }
-                }
-                
-                System.out.print("\nPilih alternatif (1-" + alternatives.size() + "), atau 0 untuk tidak: ");
-                try {
-                    int altChoice = Integer.parseInt(scanner.nextLine().trim());
-                    if (altChoice > 0 && altChoice <= alternatives.size()) {
-                        Appointment selectedAlt = alternatives.get(altChoice - 1);
-                        System.out.println("\n✅ Jadwal Anda telah dikonfirmasi:\n");
-                        System.out.println(selectedAlt);
-                    } else if (altChoice != 0) {
-                        System.out.println("❌ Pilihan tidak valid.");
-                    }
-                } catch (NumberFormatException e) {
-                    System.out.println("❌ Input tidak valid.");
                 }
             } else {
-                System.out.println("❌ Tidak ada alternatif yang tersedia.");
+                // Jika tidak ada alternatif otomatis, biarkan user memilih dari jadwal yang ditampilkan
+                if (!allAvailableSlots.isEmpty()) {
+                    System.out.println("\n=== Pilih Jadwal dari Daftar di Atas ===");
+                    System.out.print("Pilih nomor jadwal (1-" + allAvailableSlots.size() + "), atau 0 untuk tidak: ");
+                    try {
+                        int slotChoice = Integer.parseInt(scanner.nextLine().trim());
+                        if (slotChoice > 0 && slotChoice <= allAvailableSlots.size()) {
+                            Appointment selectedSlot = allAvailableSlots.get(slotChoice - 1);
+                            System.out.println("\nJadwal Anda telah dikonfirmasi:\n");
+                            System.out.println(selectedSlot);
+                        } else if (slotChoice != 0) {
+                            System.out.println("Input tidak valid.");
+                        }
+                    } catch (NumberFormatException e) {
+                        System.out.println("Input tidak valid.");
+                    }
+                } else {
+                    System.out.println("\nTidak ada jadwal yang tersedia pada hari " + student.getRequestDay() + ".");
+                }
             }
         }
 
@@ -234,7 +238,6 @@ public class Main {
     
     private static List<Appointment> findAlternativeSlots(Student student, List<Counselor> allCounselors, Counselor selectedCounselor) {
         List<Appointment> sameDayAlts = new ArrayList<>();
-        List<Appointment> otherDayAlts = new ArrayList<>();
         String requestDay = student.getRequestDay();
 
         // 1) Cari SEMUA slot dari KONSELOR LAIN pada hari request
@@ -254,7 +257,7 @@ public class Main {
             }
         }
 
-        // 2) Jika belum ada same-day, cari dari KONSELOR TERPILIH pada hari request
+        // 2)cari dari konselor pada hari request
         if (sameDayAlts.isEmpty()) {
             if (selectedCounselor.isAvailableOnDay(requestDay)) {
                 for (String slot : CAMPUS_HOURS) {
@@ -267,34 +270,7 @@ public class Main {
             }
         }
 
-        // 3) SELALU cari backup dari hari lain (max 3) untuk ditampilkan
-        int backupCount = 0;
-        for (Counselor counselor : allCounselors) {
-            if (backupCount >= 3) break;
-
-            for (String day : AVAILABLE_DAYS) {
-                if (backupCount >= 3) break;
-                
-                if (day.equalsIgnoreCase(requestDay)) {
-                    continue;
-                }
-
-                if (!counselor.isAvailableOnDay(day)) {
-                    continue;
-                }
-
-                for (String slot : CAMPUS_HOURS) {
-                    if (!student.getSchedule().contains(slot) && counselor.getOfficeHours().contains(slot)) {
-                        otherDayAlts.add(new Appointment(student, counselor, slot, day));
-                        backupCount++;
-                        break;
-                    }
-                }
-            }
-        }
-
-        // Gabung: same-day dulu, kemudian other-day
-        sameDayAlts.addAll(otherDayAlts);
+        // Return hanya alternatif hari yang sama
         return sameDayAlts;
     }
 
@@ -312,19 +288,41 @@ public class Main {
         System.out.println("");
         for (Counselor counselor : counselors) {
             if (counselor.isAvailableOnDay(day)) {
-                System.out.println("👤 " + counselor.getFullName() + " (" + counselor.getTitle() + ")");
+                System.out.println(" " + counselor.getFullName() + " (" + counselor.getTitle() + ")");
                 System.out.println("   ID: " + counselor.getId());
-                System.out.print("   Jadwal Tersedia: ");
-                
-                List<String> availableSlots = new ArrayList<>();
-                for (String hour : counselor.getOfficeHours()) {
-                    boolean studentBusy = student.getSchedule().contains(hour);
-                    String slotMarker = studentBusy ? "❌ " + hour : "✅ " + hour;
-                    availableSlots.add(slotMarker);
-                }
-                System.out.println(String.join(" | ", availableSlots));
+                System.out.println("   Jadwal Tersedia: ");
                 System.out.println("");
             }
         }
+    }
+    
+    private static List<Appointment> displayCounselorSchedulesOnDayWithOptions(List<Counselor> counselors, Student student, String day) {
+        List<Appointment> slots = new ArrayList<>();
+        System.out.println("");
+        
+        int slotNumber = 1;
+        int counselorNumber = 0;
+        
+        for (Counselor counselor : counselors) {
+            if (counselor.isAvailableOnDay(day)) {
+                counselorNumber++;
+                System.out.println("[" + counselorNumber + "] " + counselor.getFullName() + " (" + counselor.getTitle() + ")");
+                System.out.println("   ID: " + counselor.getId());
+                System.out.print("   Jadwal: ");
+                
+                List<String> slotDisplay = new ArrayList<>();
+                for (String hour : counselor.getOfficeHours()) {
+                    slotDisplay.add("[" + slotNumber + "] " + hour);
+                    
+                    Appointment apt = new Appointment(student, counselor, hour, day);
+                    slots.add(apt);
+                    slotNumber++;
+                }
+                System.out.println(String.join(" | ", slotDisplay));
+                System.out.println("");
+            }
+        }
+        
+        return slots;
     }
 }
