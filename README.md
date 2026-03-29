@@ -3,7 +3,7 @@
 Proyek Java yang mengotomatisasi pencocokan jadwal konseling antara mahasiswa dan konselor dengan sistem alternatif yang cerdas.
 
 ## Fitur Utama
-- 3 Konselor Builtin: Dr. Siti, Dr. Rini, Dr. Budi dengan jadwal kerja dan jam konseling masing-masing
+- 3 Konselor: Dr. Siti, Dr. Rini, Dr. Budi dengan jadwal kerja dan jam konseling masing-masing
 - Pilihan Konselor: Mahasiswa bisa memilih konselor pilihan (1-3)
 - Input Jam Kuliah Fleksibel: Mahasiswa memilih jam kuliah dari pilihan (1-9 = 08:00-17:00, tanpa 12:00)
 - Inputan Keluhan: Mahasiswa bisa menginput alasan/keluhan konseling
